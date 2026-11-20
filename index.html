@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TASKFLOW — نظام متطور لإدارة المهام والإنتاجية بتصميم عصري.">
+    <meta name="theme-color" content="#0b0b14">
+
+    <title>TASKFLOW | NEXORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" aria-label="الشريط الجانبي">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">N</div>
+                    <div class="logo-text">
+                        <h1>TASKFLOW</h1>
+                        <span>BY NEXORA</span>
+                    </div>
+                </div>
+                <button class="btn-icon sidebar-close" id="close-sidebar" aria-label="إغلاق القائمة">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title" data-i18n="workspace">مساحة العمل</span>
+                    <button class="nav-item active" data-view="dashboard">
+                        <i data-lucide="layout-grid"></i>
+                        <span data-i18n="dashboard">لوحة التحكم</span>
+                    </button>
+                    <button class="nav-item" data-view="tasks">
+                        <i data-lucide="check-circle"></i>
+                        <span data-i18n="myTasks">مهامي</span>
+                        <span class="badge" id="sidebar-task-count">0</span>
+                    </button>
+                    <button class="nav-item" data-view="calendar">
+                        <i data-lucide="calendar"></i>
+                        <span data-i18n="calendar">التقويم</span>
+                    </button>
+                    <button class="nav-item" data-view="analytics">
+                        <i data-lucide="bar-chart-3"></i>
+                        <span data-i18n="analytics">التحليلات</span>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title" data-i18n="taskManagement">التصنيفات</span>
+                    <button class="nav-item" data-filter="today">
+                        <i data-lucide="sun"></i>
+                        <span data-i18n="today">اليوم</span>
+                    </button>
+                    <button class="nav-item" data-filter="upcoming">
+                        <i data-lucide="clock"></i>
+                        <span data-i18n="upcoming">القادمة</span>
+                    </button>
+                    <button class="nav-item" data-filter="completed">
+                        <i data-lucide="check-square"></i>
+                        <span data-i18n="completed">المكتملة</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="pro-card">
+                    <i data-lucide="sparkles"></i>
+                    <h3 data-i18n="stayProductive">كن منتجاً</h3>
+                    <p data-i18n="upgradeDescription">نظم يومك وحقق أهدافك بذكاء.</p>
+                </div>
+                <button class="nav-item" data-view="settings" id="nav-settings">
+                    <i data-lucide="settings"></i>
+                    <span data-i18n="settings">الإعدادات</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-icon mobile-only" id="menu-toggle" aria-label="فتح القائمة">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">NEXORA</span>
+                        <i data-lucide="chevron-left" class="breadcrumb-sep"></i>
+                        <span class="breadcrumb-item active" id="current-page-title">لوحة التحكم</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="بحث..." id="global-search" data-i18n-placeholder="search">
+                        <kbd class="shortcut">⌘K</kbd>
+                    </div>
+
+                    <button class="btn-icon" id="language-toggle" title="تغيير اللغة">
+                        <i data-lucide="languages"></i>
+                    </button>
+
+                    <div class="divider"></div>
+
+                    <div class="user-pill">
+                        <div class="user-avatar">N</div>
+                        <div class="user-meta">
+                            <span class="user-name">NEXORA</span>
+                            <span class="user-role">المدير</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Views -->
+            <div class="content-body" id="page-container">
+
+                <!-- Dashboard View -->
+                <section class="view active" id="dashboard-view">
+                    <div class="view-header">
+                        <div class="welcome-section">
+                            <h2 data-i18n="welcome">مرحباً بك مجدداً</h2>
+                            <p data-i18n="welcomeDescription">إليك نظرة سريعة على إنتاجيتك اليوم.</p>
+                        </div>
+                        <button class="btn-primary" data-open-modal="task">
+                            <i data-lucide="plus"></i>
+                            <span data-i18n="createTask">إضافة مهمة</span>
+                        </button>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span data-i18n="totalTasks">إجمالي المهام</span>
+                                <h3 id="stat-total">0</h3>
+                            </div>
+                            <div class="stat-icon purple"><i data-lucide="layers"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span data-i18n="completedTasks">المكتملة</span>
+                                <h3 id="stat-completed">0</h3>
+                            </div>
+                            <div class="stat-icon green"><i data-lucide="check-circle-2"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span data-i18n="pendingTasks">قيد التنفيذ</span>
+                                <h3 id="stat-pending">0</h3>
+                            </div>
+                            <div class="stat-icon orange"><i data-lucide="clock"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span data-i18n="productivity">معدل الإنجاز</span>
+                                <h3 id="stat-productivity">0%</h3>
+                            </div>
+                            <div class="stat-icon blue"><i data-lucide="trending-up"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="grid-main">
+                            <div class="card recent-tasks">
+                                <div class="card-header">
+                                    <h4 data-i18n="recentTasks">المهام الأخيرة</h4>
+                                    <button class="btn-text" data-view="tasks">عرض الكل</button>
+                                </div>
+                                <div class="task-list-container" id="dashboard-task-list"></div>
+                                <div class="empty-placeholder hidden" id="dashboard-empty">
+                                    <i data-lucide="clipboard-list"></i>
+                                    <p data-i18n="nothingHere">لا توجد مهام حالياً</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid-side">
+                            <div class="card progress-card">
+                                <h4 data-i18n="dailyProgress">تقدم اليوم</h4>
+                                <div class="progress-ring-container">
+                                    <div class="progress-ring-wrapper">
+                                        <svg class="progress-ring" id="dashboard-ring" width="120" height="120" viewBox="0 0 120 120">
+                                            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border-light)" stroke-width="8"/>
+                                            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 0.5s ease;"/>
+                                        </svg>
+                                        <div class="ring-inner">
+                                            <span id="ring-pct">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-stats">
+                                    <div class="prog-item">
+                                        <span data-i18n="dueToday">مستحقة اليوم</span>
+                                        <strong id="summary-today">0</strong>
+                                    </div>
+                                    <div class="prog-item">
+                                        <span data-i18n="overdue">متأخرة</span>
+                                        <strong id="summary-overdue">0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tasks View -->
+                <section class="view" id="tasks-view">
+                    <div class="view-header">
+                        <h2 data-i18n="myTasks">إدارة المهام</h2>
+                        <button class="btn-primary" data-open-modal="task">
+                            <i data-lucide="plus"></i>
+                            <span data-i18n="createTask">إضافة مهمة</span>
+                        </button>
+                    </div>
+
+                    <div class="card filter-card">
+                        <div class="filter-toolbar">
+                            <div class="tabs">
+                                <button class="tab active" data-task-filter="all" data-i18n="all">الكل</button>
+                                <button class="tab" data-task-filter="active" data-i18n="active">النشطة</button>
+                                <button class="tab" data-task-filter="completed" data-i18n="completed">المكتملة</button>
+                            </div>
+                            <div class="selectors">
+                                <select id="priority-filter">
+                                    <option value="all" data-i18n="allPriorities">كل الأولويات</option>
+                                    <option value="high" data-i18n="high">عالية</option>
+                                    <option value="medium" data-i18n="medium">متوسطة</option>
+                                    <option value="low" data-i18n="low">منخفضة</option>
+                                </select>
+                                <select id="sort-filter">
+                                    <option value="date" data-i18n="sortByDate">حسب التاريخ</option>
+                                    <option value="priority" data-i18n="sortByPriority">حسب الأولوية</option>
+                                    <option value="alphabetical" data-i18n="alphabetical">أبجدياً</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="task-list-full" id="full-task-list"></div>
+                    </div>
+                </section>
+
+                <!-- Calendar View -->
+                <section class="view" id="calendar-view">
+                    <div class="view-header">
+                        <h2 data-i18n="calendar">التقويم</h2>
+                    </div>
+                    <div class="calendar-layout">
+                        <div class="card calendar-card">
+                            <div class="calendar-nav">
+                                <h3 id="calendar-month-title">شهر نوفمبر 2026</h3>
+                                <div class="nav-btns">
+                                    <button class="btn-icon" id="cal-prev"><i data-lucide="chevron-right"></i></button>
+                                    <button class="btn-outline" id="cal-today" data-i18n="today">اليوم</button>
+                                    <button class="btn-icon" id="cal-next"><i data-lucide="chevron-left"></i></button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid"></div>
+                        </div>
+                        <div class="card agenda-card">
+                            <h4 data-i18n="agenda">جدول الأعمال</h4>
+                            <div id="agenda-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics View -->
+                <section class="view" id="analytics-view">
+                    <div class="view-header">
+                        <h2 data-i18n="analytics">التحليلات</h2>
+                    </div>
+                    <div class="analytics-grid">
+                        <div class="card analytics-card">
+                            <h4 data-i18n="completionTrend">اتجاه الإنجاز</h4>
+                            <div class="chart-container" id="completion-chart"></div>
+                        </div>
+                        <div class="card analytics-card">
+                            <h4 data-i18n="priorityDistribution">توزيع الأولويات</h4>
+                            <div class="chart-container" id="priority-chart"></div>
+                        </div>
+                        <div class="card analytics-card">
+                            <h4 data-i18n="categoryBreakdown">تفصيل التصنيفات</h4>
+                            <div class="chart-container" id="category-chart"></div>
+                        </div>
+                        <div class="card analytics-card">
+                            <h4 data-i18n="weeklyStats">إحصائيات أسبوعية</h4>
+                            <div id="weekly-stats"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings View -->
+                <section class="view" id="settings-view">
+                    <div class="view-header">
+                        <h2 data-i18n="settings">الإعدادات</h2>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="card settings-card">
+                            <div class="settings-group">
+                                <h4 data-i18n="appearance">المظهر واللغة</h4>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <span data-i18n="language">لغة التطبيق</span>
+                                        <p>اختر اللغة التي تفضل استخدامها.</p>
+                                    </div>
+                                    <button class="btn-outline" id="settings-lang-toggle">English</button>
+                                </div>
+                            </div>
+                            <div class="settings-group">
+                                <h4 data-i18n="dataManagement">إدارة البيانات</h4>
+                                <div class="setting-item">
+                                    <button class="btn-outline" id="export-data"><i data-lucide="download"></i> <span data-i18n="exportData">تصدير</span></button>
+                                    <button class="btn-outline" id="import-data"><i data-lucide="upload"></i> <span data-i18n="importData">استيراد</span></button>
+                                    <input type="file" id="import-file" hidden>
+                                </div>
+                            </div>
+                            <div class="settings-group danger">
+                                <h4 data-i18n="dangerZone">منطقة الخطر</h4>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <span data-i18n="clearAllData">حذف جميع البيانات</span>
+                                        <p>سيؤدي هذا إلى حذف جميع المهام المخزنة بشكل نهائي.</p>
+                                    </div>
+                                    <button class="btn-danger" id="clear-data">حذف الآن</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <footer class="app-footer" aria-label="NEXORA">
+                <div class="footer-brand">
+                    <div class="footer-brand-icon">N</div>
+                    <div>
+                        <strong>NEXORA</strong>
+                        <span data-i18n="companyTagline">BUILD • INNOVATE • TRANSFORM</span>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" data-i18n="createTask">إضافة مهمة جديدة</h3>
+                <button class="btn-icon" data-close-modal><i data-lucide="x"></i></button>
+            </div>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <div class="form-field">
+                    <label for="task-title" data-i18n="taskTitle">عنوان المهمة</label>
+                    <input type="text" id="task-title" required placeholder="ما الذي تنوي فعله؟">
+                </div>
+                <div class="form-field">
+                    <label for="task-description" data-i18n="description">الوصف</label>
+                    <textarea id="task-description" rows="3" placeholder="أضف بعض التفاصيل..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="task-date" data-i18n="dueDate">التاريخ</label>
+                        <input type="date" id="task-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="task-priority" data-i18n="priority">الأولوية</label>
+                        <select id="task-priority">
+                            <option value="low" data-i18n="low">منخفضة</option>
+                            <option value="medium" selected data-i18n="medium">متوسطة</option>
+                            <option value="high" data-i18n="high">عالية</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="task-category" data-i18n="category">التصنيف</label>
+                    <select id="task-category">
+                        <option value="work" data-i18n="work">عمل</option>
+                        <option value="personal" data-i18n="personal">شخصي</option>
+                        <option value="study" data-i18n="study">دراسة</option>
+                        <option value="other" data-i18n="other">أخرى</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-text" data-close-modal data-i18n="cancel">إلغاء</button>
+                    <button type="submit" class="btn-primary" id="save-task-button">
+                        <i data-lucide="check"></i>
+                        <span data-i18n="saveTask">حفظ المهمة</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div id="toast-container"></div>
+
+</body>
+</html>
